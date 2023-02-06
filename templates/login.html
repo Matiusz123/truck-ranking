@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <title>Transport Ranking</title>
+    <style>
+      /* Styling for the transportation-themed graphic */
+      .transportation-graphic {
+        background-image: url('https://images.unsplash.com/photo-1510414148252-a2c44206f94b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80');
+        background-repeat: no-repeat;
+        background-position: center;
+        height: 1000px;
+          opacity: 0.5;
+      }
+      .centered {
+        position: absolute;
+        bottom: 190px;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        }
+      .top {
+          position: absolute;
+          top: 10%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+      /* Styling for the form elements */
+      .form-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+      }
+      .font {
+        width: 300px;
+        height: 40px;
+        margin: 10px 0;
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid gray;
+        background-color: lightblue;
+        color: white;
+        cursor: pointer;
+      }
+
+      input[type="text"],
+      input[type="password"] {
+        width: 300px;
+        height: 40px;
+        margin: 10px 0;
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid gray;
+      }
+      input[type="submit"] {
+        width: 300px;
+        height: 40px;
+        margin: 10px 0;
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid gray;
+        background-color: lightblue;
+        color: white;
+        cursor: pointer;
+      }
+      a {
+        margin: 10px 0;
+        font-size: 14px;
+        text-decoration: none;
+        color: blue;
+      }
+    </style>
+  </head>
+  <h2 class="top" style="font-family: sans-serif; font-size: xxx-large">Transport Ranking</h2>
+
+  <body>
+    <div class="transportation-graphic">
+    <div class="form-container ">
+      <form method="post" class="centered">
+          {% csrf_token %}
+        <h2 style="top: -90%">{{ mess }}</h2>
+        <input type="text" name="log" placeholder="Login" required />
+        <input type="password" name="pass" placeholder="Password" required />
+        <input type="submit" value="Submit" style="width: 650px; background-color: blue" />
+
+      </form>
+      <a href="#" class="centered font" style="left: 62%; bottom: 160px; width: 250px; cursor: pointer; background-color: red; font-family: serif; height: 20px">Forgot password</a>
+      <a href="/sign_up/" class="centered font" style="left: 38%; bottom: 160px; width: 250px; cursor: pointer; background-color: red; font-family: serif; height: 20px">Sign up</a>
+    </div>
+        </div>
+  </body>
+</html>

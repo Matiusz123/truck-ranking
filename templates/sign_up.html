@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sign Up</title>
+    <style>
+      /* Styling for the transportation-themed graphic */
+      .transportation-graphic {
+        background-image: url('https://images.unsplash.com/photo-1510414148252-a2c44206f94b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80');
+        background-repeat: no-repeat;
+        background-position: center;
+        height: 1000px;
+        opacity: 0.5;
+      }
+      .centered {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      .top {
+        position: absolute;
+        top: 10%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      .bottom {
+        position: absolute;
+        bottom: 10%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      /* Styling for the form elements */
+      .form-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .error-message {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+          background-color: grey;
+          color: black;
+          margin-bottom: -45px;
+          margin-left: 10px;
+          width: 250px;
+          height: 50px;
+          position: absolute;
+          left: 140%;
+          font-family: Arial, sans-serif;
+          white-space: normal;
+          word-wrap: break-word;
+          border: 1px solid black;
+          border-radius: 10px;
+          font-size: 17px;
+          padding: 5px;
+          transform: translate(-50%, -50%);
+          text-align: center;
+        }
+      input[type="text"],
+      input[type="email"],
+      input[type="password"] {
+        width: 300px;
+        height: 40px;
+        margin: 10px 0;
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid gray;
+      }
+      input[type="submit"] {
+        width: 300px;
+        height: 40px;
+        margin: 10px 0;
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid gray;
+        background-color: lightblue;
+        color: white;
+        cursor: pointer;
+      }
+        a {
+
+          width: 150px;
+          height: 17px;
+          margin: 10px 0;
+          padding: 10px;
+          font-size: 16px;
+            font-family: "Roboto", "Lucida Grande", "DejaVu Sans", "Bitstream Vera Sans", Verdana, Arial, sans-serif;
+          border-radius: 5px;
+          border: 1px solid gray;
+          background-color: palevioletred;
+          color: white;
+          cursor: pointer;
+          text-align: center;
+          text-decoration: none;
+        }
+    </style>
+  </head>
+  <body>
+  <h2 class="top" style="font-family: sans-serif; white-space: nowrap; font-size: xxx-large">Created an account</h2>
+    <div class="transportation-graphic ">
+        <form method="post" class="centered">
+          {% csrf_token %}
+          <div class="form-container">
+            {{ form.username.label_tag }}
+            {{ form.username }}
+            {% for error in form.username.errors %}
+              <p class="error-message"> - {{ error }}</p>
+            {% endfor %}
+          </div>
+          <div class="form-container">
+            {{ form.email.label_tag }}
+            {{ form.email }}
+            {% for error in form.email.errors %}
+              <p class="error-message"> - {{ error }}</p>
+            {% endfor %}
+          </div>
+          <div class="form-container">
+            {{ form.company_name.label_tag }}
+            {{ form.company_name }}
+            {% for error in form.company_name.errors %}
+              <p class="error-message"> - {{ error }}</p>
+            {% endfor %}
+          </div>
+          <div class="form-container">
+            {{ form.password.label_tag }}
+            {{ form.password }}
+            {% for error in form.password.errors %}
+              <p class="error-message"> - {{ error }}</p>
+            {% endfor %}
+          </div>
+          <div align="center">
+            <input type="submit" name="Submit" style="background-color: blue"/>
+          </div>
+
+        </form>
+</div>
+  <div>
+      <a class="bottom" href="/">Back</a>
+
+      <h1 class="bottom" style="bottom: 1%">{{ mess }}</h1>
+
+    </div>
+  </body>
+</html>
