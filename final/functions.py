@@ -20,7 +20,7 @@ def veh_data(username, password):
                }
 
     now = datetime.now() - timedelta(days=7)
-    end = now - timedelta(days=8)
+    end = now - timedelta(days=1)
 
     now_month, end_month = correct_date(now.month), correct_date(end.month)
     now_day, end_day = correct_date(now.day), correct_date(end.day)

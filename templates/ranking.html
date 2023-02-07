@@ -83,10 +83,12 @@
   </nav>
   <table class="centered" style="margin-top: 50px; top: 60px">
     <thead>
-      <tr>
-        <th>Vehicle</th>
-        <th>Amount of Vehicles in this Fleet - {{ fleet }}</th>
-      </tr>
+        <tr>
+          <th>Amount of Your Vehicles in the ranking - {{ fleet }}</th>
+        </tr>
+        <tr>
+          <th>Your top vehicle is in {{ position }} position</th>
+        </tr>
     </thead>
   </table>
   <div class="space"></div>
@@ -96,10 +98,12 @@
   {% csrf_token %}
     {% for veh in vehicle %}
         <tr>
-          <td>{{ forloop.counter }}. {{ veh.vin }} - all time l/100 is {{ veh.avgFuelConsumptionPer100Km }}
-              / last update:  - {{ veh.last_data_upload|date:"F j, Y" }} / avg l/100 since last update({{ veh.days_from_update }} days ago)
-              {{ veh.average_fuel_consumption_from_update }}
-              <input type="submit" value="refresh" name=veh_{{ veh.id }}></td>
+        <td {% if veh.vin in vins %}style="background-color: green;"{% endif %}>
+      {% if veh.vin in vins %}
+        {{ forloop.counter }}. {{ veh.vin }} - all time l/100 is {{ veh.avgFuelConsumptionPer100Km }} - Your vehicle
+      {% else %}
+        {{ forloop.counter }}. {{ veh.vin }} - all time l/100 is {{ veh.avgFuelConsumptionPer100Km }}
+      {% endif %}
         </tr>
       {% endfor %}
   </form>
