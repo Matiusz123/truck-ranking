@@ -101,12 +101,12 @@
   <body>
   <h2 class="top" style="font-family: sans-serif; white-space: nowrap; font-size: xxx-large">Created an account</h2>
     <div class="transportation-graphic ">
-        <form method="post" class="centered">
+        <form method="post" class="centered" style="bottom: -50px">
           {% csrf_token %}
           <div class="form-container">
-            {{ form.username.label_tag }}
-            {{ form.username }}
-            {% for error in form.username.errors %}
+            {{ form.login.label_tag }}
+            {{ form.login }}
+            {% for error in form.login.errors %}
               <p class="error-message"> - {{ error }}</p>
             {% endfor %}
           </div>
@@ -118,16 +118,30 @@
             {% endfor %}
           </div>
           <div class="form-container">
-            {{ form.company_name.label_tag }}
-            {{ form.company_name }}
-            {% for error in form.company_name.errors %}
+            {{ form.first_name.label_tag }}
+            {{ form.first_name }}
+            {% for error in form.first_name.errors %}
               <p class="error-message"> - {{ error }}</p>
             {% endfor %}
           </div>
           <div class="form-container">
+            {{ form.last_name.label_tag }}
+            {{ form.last_name }}
+            {% for error in form.last_name.errors %}
+              <p class="error-message"> - {{ error }}</p>
+            {% endfor %}
+          </div>
+        <div class="form-container">
             {{ form.password.label_tag }}
             {{ form.password }}
             {% for error in form.password.errors %}
+              <p class="error-message"> - {{ error }}</p>
+            {% endfor %}
+          </div>
+        <div class="form-container">
+            {{ form.password2.label_tag }}
+            {{ form.password2 }}
+            {% for error in form.password2.errors %}
               <p class="error-message"> - {{ error }}</p>
             {% endfor %}
           </div>
@@ -138,9 +152,9 @@
         </form>
 </div>
   <div>
-      <a class="bottom" href="/">Back</a>
+      <a class="bottom" style="bottom: -120px" href="/">Back</a>
 
-      <h1 class="bottom" style="bottom: 1%">{{ mess }}</h1>
+      <h1 class="bottom" style="bottom: -140px">{{ mess }}</h1>
 
     </div>
   </body>

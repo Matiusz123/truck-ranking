@@ -1,11 +1,13 @@
 import json.decoder
 import socket
 
+import django.db.utils
+
 import final.models
 from final.models import *
 from final.functions import veh_data, veh_update
 from final import static_values
-from final.forms import (Signup)
+from final.forms import Signup, LoginForm, APIForm
 
 from datetime import datetime, timedelta
 
@@ -13,143 +15,142 @@ from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
 from django.views import View
 from django.http import HttpResponse
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
 
 
 def empty(request):
     return redirect('/login/')
 
 
-def loginView(request, message=None):
-    if request.method == 'GET':
-        return render(request, 'login.html', message)
-    elif request.method == 'POST':
-        log = request.POST['log']
-        pas = request.POST['pass']
-        try:
-            user = User.objects.get(login=log, password=pas)
-            # set cookie
-            expire_time = datetime.now() + timedelta(minutes=45)
-            response = redirect('/home/')
-            response.set_cookie('log', log, expires=expire_time)
-            return response
-        except final.models.User.DoesNotExist:
-            return render(request, 'login.html', {'mess': 'No such user name or password, go to Sign up'})
+class LoginView(View):
+    def get(self, request, message=''):
+        context = {
+            'mess': message,
+            'form': LoginForm
+        }
+        return render(request, 'login.html', context)
+    def post(self, request):
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+
+            log = data.get('username')
+            password = data.get('password')
+
+            # uwierzytelnienie
+            user = authenticate(
+                username=log,
+                password=password
+            )
+        if user:
+            # logowanie
+            login(request, user)
+            return redirect('/home/')
+        else:
+            message = 'No such user name or password, go to Sign up'
+            return LoginView.get(self, request, message=message)
 
 
-def sign_up(request):
-    if request.method == 'GET':
+class Sign_up(View):
+    def get(self, request, message=''):
         form = Signup()
-        return render(request, 'sign_up.html', {'form': form})
-    elif request.method == 'POST':
+        return render(request, 'sign_up.html', {'form': form, 'mess': message})
+    def post(self, request):
         if 'Back' in request.POST:
             return redirect('/home/')
         form = Signup(request.POST)
         if form.is_valid():
             data = form.cleaned_data
-            username = data.get('username')
-            email = data.get('email')
-            company_name = data.get('company_name')
-            password = data.get('password')
-            user = User.objects.filter(login=username)
-            if user:
-                return render(request, 'sign_up.html', {'form': form, 'mess': 'Username already used'})
-            user = User.objects.filter(email=email)
-            if user:
-                return render(request, 'sign_up.html', {'form': form, 'mess': 'Email already used'})
-            else:
-                User.objects.create(login=username,
-                                    email=email,
-                                    company_name=company_name,
-                                    password=password)
-                u = User.objects.get(login=username,
-                                    email=email,
-                                    company_name=company_name,
-                                    password=password)
-                Fleet.objects.create(user_id_id=u.id)
-                return render(request, 'not_singed_in.html', static_values.Signed_up)
+
+            User.objects.create_user(
+                username=data.get('login'),
+                password=data.get('password'),
+                first_name=data.get('first_name'),
+                last_name=data.get('last_name'),
+                email=data.get('email')
+            )
+            user = User.objects.get(username=data.get('login'))
+            Fleet.objects.create(user_id=user)
+
+            return redirect('/login/')
         else:
-            errors = form.errors
-            if 'username' in errors:
-                return render(request, 'sign_up.html', {'form': form})
-            elif 'email' in errors:
-                return render(request, 'sign_up.html', {'form': form})
-            elif 'password' in errors:
-                return render(request, 'sign_up.html', {'form': form})
+            return render(request, 'sign_up.html', {'form': form})
 
 
 def home(request):
-    log = request.COOKIES.get('log')
-    if request.method == 'POST':
-        response = redirect('/home/')
-        response.delete_cookie('log')
-        return response
-    if not log:
+    if not request.user.is_authenticated:
         return render(request, 'not_singed_in.html', static_values.Not_signed_in)
-    try:
-        user = User.objects.get(login=log)
-    except User.DoesNotExist:
-        return redirect('')
+    if request.method == 'POST':
+        logout(request)
+        return redirect('/login/')
 
     # save data into variables
 
-    return render(request, 'home_page.html', {'user': user})
+    return render(request, 'home.html', {'user': request.user})
 
 
 class Input_vehicle(View):
 
     def get(self, request):
-        log = request.COOKIES.get('log')
-        if not log:
+        if not request.user.is_authenticated:
             return render(request, 'not_singed_in.html', static_values.Not_signed_in)
-        return render(request, 'input_vehicle.html')
+        return render(request, 'input_vehicle.html', {'form': APIForm})
 
 
     def post(self,request):
-        log = request.COOKIES.get('log')
-        if not log:
+        if not request.user.is_authenticated:
             return render(request, 'not_singed_in.html', static_values.Not_signed_in)
-        user = User.objects.get(login=log)
+        if 'logout' in request.POST:
+            logout(request)
+            return redirect('/login/')
         # save data into variables
-        username = request.POST['username']
-        password = request.POST['password']
-        v_data, from_date = veh_data(username, password)
-        for veh in v_data:
-            vin = veh['Vin']
-            try:
-                V = Vehicle.objects.get(vin=vin)
+        form = APIForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            username = data.get('username')
+            password = data.get('password')
+            v_data, from_date = veh_data(username, password)
+            user = request.user
+            for veh in v_data:
+                vin = veh['Vin']
                 try:
+                    V = Vehicle.objects.get(vin=vin)
+                    try:
+                        F = Fleet.objects.get(user_id_id=user.id)
+                        VehiclesInFleet.objects.get(Vehicle_id=V.id, Fleet_id=F.id)
+                        # This is the refresh place
+                        continue
+                    except VehiclesInFleet.DoesNotExist:
+                        VehiclesInFleet.objects.create(Vehicle_id=V.id, Fleet_id=F.id)
+                        F.amount += 1
+                        F.save()
+                except Vehicle.DoesNotExist:
+                    fuel_consumption = round(veh['EngineTotalFuelUsed'] / veh['HRTotalVehicleDistance'] * 100, 2)
+                    Vehicle.objects.create(avgFuelConsumptionPer100Km=fuel_consumption,
+                                           vin=vin,
+                                           last_data_upload=datetime.now(),
+                                           first_data_upload=from_date,
+                                           distance_traveled=veh['HRTotalVehicleDistance'],
+                                           fuel_consumed=veh['EngineTotalFuelUsed'])
+                    V = Vehicle.objects.get(vin=vin)
                     F = Fleet.objects.get(user_id_id=user.id)
-                    VehiclesInFleet.objects.get(Vehicle_id=V.id, Fleet_id=F.id)
-                    # This is the refresh place
-                    continue
-                except VehiclesInFleet.DoesNotExist:
+                    API.objects.create(username=username, password=password, vehicle_id=V.id)
                     VehiclesInFleet.objects.create(Vehicle_id=V.id, Fleet_id=F.id)
                     F.amount += 1
                     F.save()
-            except Vehicle.DoesNotExist:
-                fuel_consumption = round(veh['EngineTotalFuelUsed'] / veh['HRTotalVehicleDistance'] * 100, 2)
-                Vehicle.objects.create(avgFuelConsumptionPer100Km=fuel_consumption,
-                                       vin=vin,
-                                       last_data_upload=datetime.now(),
-                                       first_data_upload=from_date,
-                                       distance_traveled=veh['HRTotalVehicleDistance'],
-                                       fuel_consumed=veh['EngineTotalFuelUsed'])
-                V = Vehicle.objects.get(vin=vin)
-                F = Fleet.objects.get(user_id_id=user.id)
-                API.objects.create(username=username, password=password, vehicle_id=V.id)
-                VehiclesInFleet.objects.create(Vehicle_id=V.id, Fleet_id=F.id)
-                F.amount += 1
-                F.save()
-        return redirect('/home/')
+            return redirect('/home/')
+        else:
+            return render(request, 'input_vehicle.html', {'form': form})
+
 
 
 class Show_Fleet(View):
 
     def get(self, request, error=''):
-        log = request.COOKIES.get('log')
-        if not log:
+        if not request.user.is_authenticated:
             return render(request, 'not_singed_in.html', static_values.Not_signed_in)
-        user = User.objects.get(login=log)
+        user = request.user
         F = Fleet.objects.get(user_id_id=user.id)
         Veh = Vehicle.objects.filter(vehiclesinfleet__Fleet_id=F.id).order_by('avgFuelConsumptionPer100Km')
         paginator = Paginator(Veh, 15)  # Show 20 per page
@@ -168,6 +169,13 @@ class Show_Fleet(View):
 
 
     def post(self, request):
+        if not request.user.is_authenticated:
+            return render(request, 'not_singed_in.html', static_values.Not_signed_in)
+        if 'logout' in request.POST:
+            logout(request)
+            return redirect('/login/')
+        if 'back' in request.POST:
+            return redirect('/home/')
         for key in request.POST:
             if key.startswith("veh_"):
                 veh_id = key.split("_")[1]
@@ -195,15 +203,12 @@ class Show_Fleet(View):
 
 class Ranking(View):
     def get(self, request):
-        log = request.COOKIES.get('log')
-        if not log:
+        if not request.user.is_authenticated:
             return render(request, 'not_singed_in.html', static_values.Not_signed_in)
-        user = User.objects.get(login=log)
+        user = request.user
         F = Fleet.objects.get(user_id_id=user.id)
         if F.amount == 0:
             return render(request, 'no_fleet.html')
-        if user.company_name == '':
-            return render(request, 'ranking_company_name.html')
         F = Fleet.objects.get(user_id_id=user.id)
         V_user = Vehicle.objects.filter(vehiclesinfleet__Fleet_id=F.id)
         Vin_user = [vehicle.vin for vehicle in V_user]
@@ -226,10 +231,11 @@ class Ranking(View):
         return render(request, 'ranking.html', data)
 
     def post(self, request):
-        log = request.COOKIES.get('log')
-        if not log:
+        if not request.user.is_authenticated:
             return render(request, 'not_singed_in.html', static_values.Not_signed_in)
-        user = User.objects.get(login=log)
-        user.company_name = request.POST['company_name']
+        if 'logout' in request.POST:
+            logout(request)
+            return redirect('/login/')
+        user = request.user
         user.save()
         return Ranking.get(self, request)

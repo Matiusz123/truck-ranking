@@ -2,13 +2,8 @@ from django.db import models
 from datetime import datetime, timedelta
 # Create your models here.
 from django.utils.timezone import now
-
-
-class User(models.Model):
-    login = models.CharField(max_length=20, unique=True)
-    password = models.CharField(max_length=20)
-    email = models.CharField(max_length=50, unique=True)
-    company_name = models.CharField(max_length=40, default="No Company name")
+from django.db import models
+from django.contrib.auth.models import User
 
 
 class Vehicle(models.Model):

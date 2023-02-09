@@ -31,16 +31,12 @@ def veh_data(username, password):
                         f"datetype=received&contentFilter=ACCUMULATED&"
                         f"triggerFilter=DISTANCE_TRAVELLED%2CENGINE_ON%2CIGNITION_ON&"
                         f"latestOnly=false", headers=headers)
-
     res = conn.getresponse()
     data = res.read()
     conn.close()
-
     a = data.decode("utf-8")
     dict = json.loads(a)
-
     vehicle_data = dict['VehicleStatus']
-
     return vehicle_data, now
 
 

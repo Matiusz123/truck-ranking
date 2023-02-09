@@ -1,56 +1,49 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/html">
-  <head>
-    <title>Sign Up</title>
-    <style>
-      /* Styling for the transportation-themed graphic */
-      .transportation-graphic {
+{% extends 'base.html' %}
+
+{% block content %}
+<style type="text/css">
+	.my-grid{
+		border: 1px solid black;
+	}
+	.my-grid-item{
+		border: 1px solid blue;
+	}
+    .transportation-graphic {
         background-image: url('https://images.unsplash.com/photo-1510414148252-a2c44206f94b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80');
         background-repeat: no-repeat;
         background-position: center;
         height: 1000px;
-        opacity: 0.5;
+          opacity: 0.5;
       }
+    .error-message {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+          background-color: grey;
+          color: black;
+          margin-bottom: -45px;
+          margin-left: 10px;
+          width: 250px;
+          height: 50px;
+          position: absolute;
+          left: 140%;
+          font-family: Arial, sans-serif;
+          white-space: normal;
+          word-wrap: break-word;
+          border: 1px solid black;
+          border-radius: 10px;
+          font-size: 17px;
+          padding: 5px;
+          transform: translate(-50%, -50%);
+          text-align: center;
+        }
       .centered {
         position: absolute;
-        bottom: 120px;
+        bottom: 190px;
         left: 50%;
         transform: translate(-50%, -50%);
-      }
-      .bottom {
-        position: absolute;
-        bottom: 22%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-      .top {
-        position: absolute;
-        top: 10%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-      /* Styling for the form elements */
-      .form-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 20px;
-          left: 58%;
-      }
-      .font {
-        width: 300px;
-        height: 40px;
-        margin: 10px 0;
-        padding: 10px;
-        font-size: 16px;
-        border-radius: 5px;
-        border: 1px solid gray;
-        background-color: lightblue;
-        color: white;
-        cursor: pointer;
-      }
+        }
       input[type="text"],
-      input[type="email"],
       input[type="password"] {
         width: 300px;
         height: 40px;
@@ -60,7 +53,7 @@
         border-radius: 5px;
         border: 1px solid gray;
       }
-      input[type="submit"] {
+      input[id="api"] {
         width: 300px;
         height: 40px;
         margin: 10px 0;
@@ -72,48 +65,45 @@
         color: white;
         cursor: pointer;
       }
-
-      a {
-
-          width: 150px;
-          height: 17px;
-          margin: 10px 0;
-          padding: 10px;
-          font-size: 16px;
-            font-family: "Roboto", "Lucida Grande", "DejaVu Sans", "Bitstream Vera Sans", Verdana, Arial, sans-serif;
-          border-radius: 5px;
-          border: 1px solid gray;
-          background-color: palevioletred;
-          color: white;
-          cursor: pointer;
-          text-align: center;
-          text-decoration: none;
+    .top {
+          position: absolute;
+          top: 10%;
+          left: 50%;
+          transform: translate(-50%, -50%);
         }
-    </style>
-  </head>
+</style>
+
+<!-- Flexbox: https://css-tricks.com/snippets/css/a-guide-to-flexbox/ -->
+      <h2 class="centered" style="bottom: 50px;font-family: sans-serif; font-size: xxx-large">Api information</h2>
 
   <body>
-  <h2 class="top" style="font-family: sans-serif; font-size: xxx-large;">API Information</h2>
-    <div class="transportation-graphic">
-      <div class="form-container centered">
 
-
-
-
-          <form method="post">
+      <form method="post" class="centered">
           {% csrf_token %}
-          <h2 style="top: -90%">{{ mess }}</h2>
-          <input type="text" name="username" placeholder="Username" required />
-          <input type="text" name="password" placeholder="password" required />
-          <input type="submit" value="Submit" style="background-color: blue"/>
-            </form>
+        <div class="form-container">
+            {{ form.username.label_tag }}
+            {{ form.username }}
+            {% for error in form.username.errors %}
+              <p class="error-message"> - {{ error }}</p>
+            {% endfor %}
           </div>
+      <div class="form-container">
+            {{ form.password.label_tag }}
+            {{ form.password }}
+            {% for error in form.password.errors %}
+              <p class="error-message"> - {{ error }}</p>
+            {% endfor %}
+          </div>
+      <div align="center">
+            <input type="submit" id="api" name="Submit API" style="background-color: blue"/>
+          </div>
+      </form>
+  <div>
+      <a class="bottom" style="bottom: -120px" href="/">Back</a>
 
+      <h1 class="bottom" style="bottom: -140px">{{ mess }}</h1>
 
-
-
-      </div>
-  <a class="bottom" style="bottom: 200px" href="/home/">Back</a>
     </div>
   </body>
-</html>
+
+{% endblock content %}

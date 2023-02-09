@@ -53,7 +53,7 @@
         border-radius: 5px;
         border: 1px solid gray;
       }
-      input[type="submit"] {
+      input[id="login"] {
         width: 300px;
         height: 40px;
         margin: 10px 0;
@@ -77,18 +77,16 @@
 
   <body>
     <div class="transportation-graphic">
-    <div class="form-container ">
-      <form method="post" class="centered">
+
+      <form method="post" class="centered" style="bottom: -50px;">
           {% csrf_token %}
         <h2 style="top: -90%">{{ mess }}</h2>
-        <input type="text" name="log" placeholder="Login" required />
-        <input type="password" name="pass" placeholder="Password" required />
-        <input type="submit" value="Submit" style="width: 650px; background-color: blue" />
+        {{ form.as_p }}
+        <input type="submit" id="login" style="background-color: blue" value="Log In">
+        </form>
+      <a href="#" class="centered font"  style="bottom: -50px;left: 62%; width: 250px; cursor: pointer; background-color: red; font-family: serif; height: 20px">Forgot password</a>
+      <a href="/sign_up/" class="centered font" style="bottom: -50px;left: 38%; width: 250px; cursor: pointer; background-color: red; font-family: serif; height: 20px">Sign up</a>
 
-      </form>
-      <a href="#" class="centered font" style="left: 62%; bottom: 160px; width: 250px; cursor: pointer; background-color: red; font-family: serif; height: 20px">Forgot password</a>
-      <a href="/sign_up/" class="centered font" style="left: 38%; bottom: 160px; width: 250px; cursor: pointer; background-color: red; font-family: serif; height: 20px">Sign up</a>
-    </div>
         </div>
   </body>
 </html>

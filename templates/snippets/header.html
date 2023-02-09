@@ -1,0 +1,34 @@
+{% load static %}
+
+<!-- Header -->
+<div class="d-flex flex-column flex-lg-row p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+
+
+	<div class="d-none d-md-flex flex-row my-auto flex-grow-1 align-items-center">
+		<h5 class="mr-3 font-weight-normal justify-content-start" style="font-size: 16px">
+
+			<a class="p-2 text-dark box" href="/home/"><img src="{% static 'logos/home1.png' %}">Home</a>
+            <a class="p-2 text-dark box" href="/show_my_fleet/"><img src="{% static 'logos/garage.png' %}"> Show My Fleet </a>
+            <a class="p-2 text-dark box" href="/ranking/"><img src="{% static 'logos/score.png' %}"> Join the Race </a>
+            <a class="p-2 text-dark box" href="/see_your_scores/"><img src="{% static 'logos/scoreboard.png' %}"> See Your Scores </a>
+            <a class="p-2 text-dark box" href="/input_your_vehicle/"><img src="{% static 'logos/add.png' %}"> Input Your Vehicle </a>
+            <a class="p-2 text-dark box" href="/input_your_fleet/"> Input Your Fleet </a>
+
+		</h5>
+
+        <div>
+        <ul style="list-style: none;">
+        <li><a class="p-2 text-dark"><img src="{% static 'logos/user.png' %}">{{ user.username }}</a></li>
+        <li><a class="p-2 text-dark"><img src="{% static 'logos/mail.png' %}">{{ user.email }}</a></li>
+
+        </ul>
+		</div>
+	</div>
+
+
+
+</div>
+<form method="post" style="text-align: right">
+    {% csrf_token %}
+        <input class="box" type="submit" name="logout" value="LOG OUT" style="background-color: darkred"/>
+    </form>

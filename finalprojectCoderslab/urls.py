@@ -15,12 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
+
 from final import views
 
 urlpatterns = [
+    path('admin/', admin.site.urls),
     path('', views.empty),
-    path('login/', views.loginView),
-    path('sign_up/', views.sign_up),
+    path('login/', views.LoginView.as_view()),
+    path('sign_up/', views.Sign_up.as_view()),
     path('home/', views.home),
     path('input_your_vehicle/', views.Input_vehicle.as_view()),
     path('input_your_fleet/', views.Input_vehicle.as_view()),
@@ -28,3 +32,6 @@ urlpatterns = [
     path('ranking/', views.Ranking.as_view()),
 
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,94 +1,22 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Fleet Management</title>
-  <style>
-    body {
-      background-image: url('https://images.unsplash.com/photo-1510414148252-a2c44206f94b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80');
-      background-size: cover;
-      font-size: 18px;
-        background-repeat: no-repeat;
-    }
-    .back {
-        width: 200px;
-        height: 20px;
-        margin: 10px 0;
-        padding: 10px;
-        font-size: 16px;
-        border-radius: 5px;
-        border: 1px solid gray;
-        background-color: darkred;
-        color: white;
-        cursor: pointer;
-        text-align: center;
-        text-decoration: none;
-      }
-    .centered {
-        position: absolute;
-        bottom: 120px;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-    nav {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 50px;
-        position: absolute;
-        top: 50px;
-        margin-bottom: 50px;
-        left: 50%;
-        transform: translate(-50%, -50%);
+{% extends 'base.html' %}
 
-    }
-    nav ul {
-      display: flex;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-    nav a {
-      display: block;
-      padding: 10px 20px;
-      border: 2px solid #000;
-      text-decoration: none;
-      color: #000;
-      font-weight: bold;
-      margin-right: 10px;
-      border-radius: 10px;
-    }
-    td {
-        border: 1px solid gray;
-        padding: 10px;
-        background-color: gray;
-    }
-    .space { margin-top: 150px; }
+{% block content %}
+<style type="text/css">
+	.my-grid{
+		border: 1px solid black;
+	}
+	.my-grid-item{
+		border: 1px solid blue;
+	}
+</style>
 
-  </style>
-</head>
-<body>
-  <div style="float:right;margin-right:20px;">
-    User: <strong id="username">{{ user.login }}</strong>
-    <br />
-    Email: <strong id="email">{{ user.email }}</strong>
-  </div>
-  <nav>
-    <ul>
-      <li><a href="/show_my_fleet/"> Show My Fleet </a></li>
-      <li><a href="/ranking/"> Join the Race </a></li>
-      <li><a href="/see_your_scores/"> See Your Scores </a></li>
-      <li><a href="/input_your_vehicle/"> Input Your Vehicle </a></li>
-      <li><a href="/input_your_fleet/"> Input Your Fleet </a></li>
-    </ul>
-  </nav>
-  <table class="centered" style="margin-top: 50px; top: 60px">
+<table align="center">
     <thead>
-      <tr>
-        <th>Vehicle</th>
-        <th>Amount of Vehicles in this Fleet - {{ fleet }}</th>
-      </tr>
+        <tr>
+            <th>Amount of Vehicles in this Fleet - {{ fleet }}</th>
+        </tr>
     </thead>
-  </table>
+</table>
   <div class="space"></div>
   <h2>{{ error }}</h2>
   <table>
@@ -96,7 +24,7 @@
   {% csrf_token %}
     {% for veh in vehicle %}
         <tr>
-          <td>{{ forloop.counter }}. {{ veh.vin }} - all time l/100 is {{ veh.avgFuelConsumptionPer100Km }}
+          <td class="box">{{ forloop.counter }}. {{ veh.vin }} - all time l/100 is {{ veh.avgFuelConsumptionPer100Km }}
               / last update:  - {{ veh.last_data_upload|date:"F j, Y" }} / avg l/100 since last update({{ veh.days_from_update }} days ago)
               {{ veh.average_fuel_consumption_from_update }}
               <input type="submit" value="refresh" name=veh_{{ veh.id }}></td>
@@ -104,13 +32,13 @@
       {% endfor %}
   </form>
   </table>
-  <div class="pagination" style="border: 1px solid gray;padding: 10px;background-color: indianred; width: 400px">
-    <span class="step-links">
+  <div class="pagination"  style="border: 1px solid gray;padding: 10px;background-color: indianred; width: 400px">
+    <span class="step-links"  >
             <span class="current">
-               | Strona {{ vehicle.number }} |
+               | Page {{ vehicle.number }} |
             </span>
             {% if vehicle.has_previous %}
-                <a href="?page={{ vehicle.previous_page_number }}">&laquo; poprzednia |</a>
+                <a href="?page={{ vehicle.previous_page_number }}">&laquo; previous |</a>
                 <a href="?page={{ vehicle.previous_page_number }}">{{ vehicle.previous_page_number }} |</a>
             {% endif %}
 
@@ -120,11 +48,18 @@
 
             {% if vehicle.has_next %}
                 <a href="?page={{ vehicle.next_page_number }}">{{ vehicle.next_page_number }} |</a>
-                <a href="?page={{ vehicle.next_page_number }}">następna &raquo; |</a>
+                <a href="?page={{ vehicle.next_page_number }}">next &raquo; |</a>
 
             {% endif %}
         </span>
     </div>
-<a href="/home/" class="back centered" style="height: 20px; top: 220px; left: 1300px;opacity: 0.8 " >Back</a>
+<form method="post">
+    {% csrf_token %}
+        <input class="box" type="submit" name="back" value="Back" style="background-color: darkred; width: 300px"/>
+    </form>
 </body>
 </html>
+
+<!-- Flexbox: https://css-tricks.com/snippets/css/a-guide-to-flexbox/ -->
+
+{% endblock content %}
