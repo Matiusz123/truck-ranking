@@ -27,7 +27,7 @@
   {% csrf_token %}
     {% for veh in vehicle %}
         <tr>
-        <td class="box" {% if veh.vin in vins %}style="background-color: green;"{% endif %}>{{ forloop.counter }}. {{ veh.vin }} - all time l/100 is {{ veh.avgFuelConsumptionPer100Km }}
+        <td class="d-none d-md-flex flex-row my-auto flex-grow-1 align-items-center text-dark box" {% if veh.vin in vins %}style="background-color: green;"{% endif %}>{{ forloop.counter }}. {{ veh.vin }} - all time l/100 is {{ veh.avgFuelConsumptionPer100Km }}
         </tr>
       {% endfor %}
   </form>

@@ -84,10 +84,11 @@ def home(request):
     if request.method == 'POST':
         logout(request)
         return redirect('/login/')
+    event = Event.objects.get(name='Refresh')
 
     # save data into variables
 
-    return render(request, 'home.html', {'user': request.user})
+    return render(request, 'home.html', {'user': request.user, 'event': event})
 
 
 class Input_vehicle(View):

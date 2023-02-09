@@ -32,3 +32,8 @@ class API(models.Model):
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
     username = models.CharField(max_length=50)
     password = models.CharField(max_length=50)
+
+
+class Event(models.Model):
+    name = models.CharField(max_length=50)
+    when = models.DateTimeField()
