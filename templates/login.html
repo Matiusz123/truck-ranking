@@ -78,15 +78,15 @@
   <body>
     <div class="transportation-graphic">
 
-      <form method="post" class="centered" style="bottom: -50px;">
+      <form method="post" class="centered">
           {% csrf_token %}
         <h2 style="top: -90%">{{ mess }}</h2>
         {{ form.as_p }}
         <input type="submit" id="login" style="background-color: blue" value="Log In">
-        </form>
-      <a href="#" class="centered font"  style="bottom: -50px;left: 62%; width: 250px; cursor: pointer; background-color: red; font-family: serif; height: 20px">Forgot password</a>
-      <a href="/sign_up/" class="centered font" style="bottom: -50px;left: 38%; width: 250px; cursor: pointer; background-color: red; font-family: serif; height: 20px">Sign up</a>
 
+      <a href="#" class="centered font"  style="bottom: -70px;left: 80%; width: 150px; cursor: pointer; background-color: red; font-family: serif; height: 20px">Forgot password</a>
+      <a href="/sign_up/" class="centered font" style="bottom: -70px;left: 20%; width: 150px; cursor: pointer; background-color: red; font-family: serif; height: 20px">Sign up</a>
+        </form>
         </div>
   </body>
 </html>

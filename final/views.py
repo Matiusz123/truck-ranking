@@ -1,20 +1,16 @@
 import json.decoder
 import socket
 
-import django.db.utils
-
-import final.models
-from final.models import *
 from final.functions import veh_data, veh_update, fleet_data
 from final import static_values
 from final.forms import Signup, LoginForm, APIForm, APIFormVIN
+from final.models import *
 
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
 from django.views import View
-from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 
@@ -93,6 +89,7 @@ def home(request):
 class Input_fleet(View):
 
     def get(self, request):
+
         if not request.user.is_authenticated:
             return render(request, 'not_singed_in.html', static_values.Not_signed_in)
         return render(request, 'input_fleet.html', {'form': APIForm})
@@ -191,11 +188,11 @@ class Show_Fleet(View):
                         V.days_from_update = time_update
                         fuel_consumption = round(V.fuel_consumed / V.distance_traveled * 100, 2)
                         V.avgFuelConsumptionPer100Km = fuel_consumption
+                        V.save()
                         Event.objects.create(Vehicle=veh_id,
                                              milage=V.distance_traveled,
                                              fuel=V.fuel_consumed,
                                              fuel_per100=V.average_fuel_consumption_from_update)
-                        V.save()
                         return Show_Fleet.get(self, request)
                 except json.decoder.JSONDecodeError or socket.timeout:
                     return Show_Fleet.get(self, request, "Vehicles can be refreshed every 10s")
@@ -289,4 +286,5 @@ class Input_vehicle(View):
                 VehiclesInFleet.objects.create(Vehicle_id=V.id, Fleet_id=F.id)
                 F.amount += 1
                 F.save()
-        return redirect('/home/')
+        else:
+            return render(request, 'input_vehicle.html', {'form': form})

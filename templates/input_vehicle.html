@@ -80,22 +80,25 @@
 
       <form method="post" class="centered">
           {% csrf_token %}
-        <div class="form-container box">
-            {{ form.username.label_tag }}
+        <div class="form-container">
+        <p class="box">
+            {{ form.username.label_tag }}</p>
             {{ form.username }}
             {% for error in form.username.errors %}
               <p class="error-message"> - {{ error }}</p>
             {% endfor %}
           </div>
-      <div class="form-container box">
-            {{ form.password.label_tag }}
+      <div class="form-container">
+              <p class="box">
+            {{ form.password.label_tag }}</p>
             {{ form.password }}
             {% for error in form.password.errors %}
               <p class="error-message"> - {{ error }}</p>
             {% endfor %}
           </div>
-      <div class="form-container box">
-            {{ form.vin.label_tag }}
+      <div class="form-container">
+        <p class="box">
+            {{ form.vin.label_tag }}</p>
             {{ form.vin }}
             {% for error in form.vin.errors %}
               <p class="error-message"> - {{ error }}</p>
@@ -104,13 +107,13 @@
       <div align="center">
             <input type="submit" id="api" name="Submit API" style="background-color: blue"/>
           </div>
+      <div align="center">
+          <div align="center" class="box" style="background-color: darkred; width: 150px;">
+      <a href="/home/" style="color: white;">Back</a>
+      <h1 class="bottom">{{ mess }}</h1>
+</div></div>
       </form>
-  <div>
-      <a class="bottom" style="bottom: -120px" href="/">Back</a>
 
-      <h1 class="bottom" style="bottom: -140px">{{ mess }}</h1>
-
-    </div>
   </body>
 
 {% endblock content %}

@@ -23,13 +23,13 @@ from final import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.empty),
-    path('login/', views.LoginView.as_view()),
-    path('sign_up/', views.Sign_up.as_view()),
-    path('home/', views.home),
-    path('input_your_vehicle/', views.Input_vehicle.as_view()),
-    path('input_your_fleet/', views.Input_fleet.as_view()),
-    path('show_my_fleet/', views.Show_Fleet.as_view()),
-    path('ranking/', views.Ranking.as_view()),
+    path('login/', views.LoginView.as_view(), name='login'),
+    path('sign_up/', views.Sign_up.as_view(), name='sign_up'),
+    path('home/', views.home, name='home'),
+    path('input_your_vehicle/', views.Input_vehicle.as_view(), name='input_your_vehicle'),
+    path('input_your_fleet/', views.Input_fleet.as_view(), name='input_your_fleet'),
+    path('show_my_fleet/', views.Show_Fleet.as_view(), name='show_my_fleet'),
+    path('ranking/', views.Ranking.as_view(), name='ranking'),
 
 ]
 if settings.DEBUG:
