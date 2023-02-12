@@ -5,14 +5,14 @@
 
 
 	<div class="d-none d-md-flex flex-row my-auto flex-grow-1 align-items-center">
-		<h5 class="mr-3 font-weight-normal justify-content-start" style="font-size: 16px">
+		<h5 id="przyciski" class="mr-3 font-weight-normal justify-content-start" style="font-size: 16px">
 
 			<a class="p-2 text-dark box" href="/home/"><img src="{% static 'logos/home1.png' %}">Home</a>
             <a class="p-2 text-dark box" href="/show_my_fleet/"><img src="{% static 'logos/garage.png' %}"> Show My Fleet </a>
             <a class="p-2 text-dark box" href="/ranking/"><img src="{% static 'logos/score.png' %}"> Join the Race </a>
             <a class="p-2 text-dark box" href="/see_your_scores/"><img src="{% static 'logos/scoreboard.png' %}"> See Your Scores </a>
             <a class="p-2 text-dark box" href="/input_your_vehicle/"><img src="{% static 'logos/add.png' %}"> Input Your Vehicle </a>
-            <a class="p-2 text-dark box" href="/input_your_fleet/"> Input Your Fleet </a>
+            <a class="p-2 text-dark box" href="/input_your_fleet/"><img src="{% static 'logos/duplicate.png' %}"> Input Your Fleet </a>
 
 		</h5>
 
@@ -27,5 +27,8 @@
 </div>
 <form method="post" style="text-align: right">
     {% csrf_token %}
-        <input class="box" type="submit" name="logout" value="LOG OUT" style="background-color: darkred"/>
+        <input class="box" type="submit" name="logout" value="LOG OUT" style="background-color: darkred; color: white"/>
     </form>
+{% block scripts %}
+    <script src={% static 'header.js' %}></script>
+{% endblock scripts %}

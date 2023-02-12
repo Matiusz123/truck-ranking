@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
 
 
@@ -18,38 +18,59 @@
   {% csrf_token %}
     {% for veh in vehicle %}
         <tr>
-          <td class="d-none d-md-flex flex-row my-auto flex-grow-1 align-items-center text-dark box" style="border-width: 1px">{{ forloop.counter }}. {{ veh.vin }} - all time l/100 is {{ veh.avgFuelConsumptionPer100Km }}
+          <td class="d-none d-md-flex flex-row my-auto flex-grow-1 align-items-center text-dark box flex-column flex-lg-row" style="border-width: 1px; width: 98%">{{ forloop.counter }}. {{ veh.vin }} - all time l/100 is {{ veh.avgFuelConsumptionPer100Km }}
               / last update:  - {{ veh.last_data_upload|date:"F j, Y" }} / avg l/100 since last update({{ veh.days_from_update }} days ago)
-              {{ veh.average_fuel_consumption_from_update }}
-              <input type="submit" value="refresh" name=veh_{{ veh.id }}></td>
+              {{ veh.average_fuel_consumption_from_update }}</td>
+              <td class="flex-column" >
+                <input  id="refresh" type="submit" value="refresh" name=veh_{{ veh.id }}>
+              </td>
         </tr>
       {% endfor %}
   </form>
   </table>
-  <div class="pagination"  style="border: 1px solid gray;padding: 10px;background-color: indianred; width: 400px">
-    <span class="step-links"  >
-            <span class="current">
-               | Page {{ vehicle.number }} |
-            </span>
-            {% if vehicle.has_previous %}
-                <a href="?page={{ vehicle.previous_page_number }}">&laquo; previous |</a>
-                <a href="?page={{ vehicle.previous_page_number }}">{{ vehicle.previous_page_number }} |</a>
-            {% endif %}
+  <nav aria-label="Page navigation">
+  <ul class="pagination" style="display: flex; justify-content: center;">
+    {% if vehicle.has_previous %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ vehicle.previous_page_number }}">Previous</a>
+    </li>
+    {% else %}
+    <li class="page-item disabled">
+      <a class="page-link" href="#" tabindex="-1">Previous</a>
+    </li>
+    {% endif %}
 
-            <span class="current">
-              {{ vehicle.number }} |
-            </span>
+    {% if vehicle.has_previous %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ vehicle.previous_page_number }}">{{ vehicle.previous_page_number }}</a>
+    </li>
+    {% endif %}
 
-            {% if vehicle.has_next %}
-                <a href="?page={{ vehicle.next_page_number }}">{{ vehicle.next_page_number }} |</a>
-                <a href="?page={{ vehicle.next_page_number }}">next &raquo; |</a>
+    <li class="page-item active">
+      <a class="page-link" href="#">{{ vehicle.number }} <span class="sr-only"></span></a>
+    </li>
 
-            {% endif %}
-        </span>
-    </div>
-<form method="post">
+    {% if vehicle.has_next %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ vehicle.next_page_number }}">{{ vehicle.next_page_number }}</a>
+    </li>
+    {% endif %}
+
+    {% if vehicle.has_next %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ vehicle.next_page_number }}">Next</a>
+    </li>
+    {% else %}
+    <li class="page-item disabled">
+      <a class="page-link" href="#">Next</a>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
+
+<form method="post" style="display: flex; justify-content: center;">
     {% csrf_token %}
-        <input class="box" type="submit" name="back" value="Back" style="background-color: darkred; width: 300px"/>
+        <input class="box" type="submit" name="back" value="Back" style="background-color: darkred; width: 300px; color: white; "/>
     </form>
 </body>
 </html>
@@ -57,3 +78,6 @@
 <!-- Flexbox: https://css-tricks.com/snippets/css/a-guide-to-flexbox/ -->
 
 {% endblock content %}
+{% block scripts %}
+    <script src={% static 'show_fleet.js' %}></script>
+{% endblock scripts %}

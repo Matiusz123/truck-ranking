@@ -94,13 +94,6 @@
               <p class="error-message"> - {{ error }}</p>
             {% endfor %}
           </div>
-      <div class="form-container box">
-            {{ form.vin.label_tag }}
-            {{ form.vin }}
-            {% for error in form.vin.errors %}
-              <p class="error-message"> - {{ error }}</p>
-            {% endfor %}
-          </div>
       <div align="center">
             <input type="submit" id="api" name="Submit API" style="background-color: blue"/>
           </div>

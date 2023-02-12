@@ -5,9 +5,9 @@ import django.db.utils
 
 import final.models
 from final.models import *
-from final.functions import veh_data, veh_update
+from final.functions import veh_data, veh_update, fleet_data
 from final import static_values
-from final.forms import Signup, LoginForm, APIForm
+from final.forms import Signup, LoginForm, APIForm, APIFormVIN
 
 from datetime import datetime, timedelta
 
@@ -84,19 +84,18 @@ def home(request):
     if request.method == 'POST':
         logout(request)
         return redirect('/login/')
-    event = Event.objects.get(name='Refresh')
 
     # save data into variables
 
-    return render(request, 'home.html', {'user': request.user, 'event': event})
+    return render(request, 'home.html', {'user': request.user})
 
 
-class Input_vehicle(View):
+class Input_fleet(View):
 
     def get(self, request):
         if not request.user.is_authenticated:
             return render(request, 'not_singed_in.html', static_values.Not_signed_in)
-        return render(request, 'input_vehicle.html', {'form': APIForm})
+        return render(request, 'input_fleet.html', {'form': APIForm})
 
 
     def post(self,request):
@@ -111,7 +110,7 @@ class Input_vehicle(View):
             data = form.cleaned_data
             username = data.get('username')
             password = data.get('password')
-            v_data, from_date = veh_data(username, password)
+            v_data, from_date = fleet_data(username, password)
             user = request.user
             for veh in v_data:
                 vin = veh['Vin']
@@ -142,8 +141,7 @@ class Input_vehicle(View):
                     F.save()
             return redirect('/home/')
         else:
-            return render(request, 'input_vehicle.html', {'form': form})
-
+            return render(request, 'input_fleet.html', {'form': form})
 
 
 class Show_Fleet(View):
@@ -184,9 +182,6 @@ class Show_Fleet(View):
                 try:
                     if V.last_data_upload.date() == datetime.now().date():
                         return Show_Fleet.get(self, request, "Vehicle is up to date")
-                    if not veh_update(V):
-                        fuel = 'something went wrong with API'
-                        return HttpResponse(fuel)
                     else:
                         update_milage, update_fuel, fuel_consumption, time_update = veh_update(V)
                         V.distance_traveled += update_milage
@@ -196,6 +191,10 @@ class Show_Fleet(View):
                         V.days_from_update = time_update
                         fuel_consumption = round(V.fuel_consumed / V.distance_traveled * 100, 2)
                         V.avgFuelConsumptionPer100Km = fuel_consumption
+                        Event.objects.create(Vehicle=veh_id,
+                                             milage=V.distance_traveled,
+                                             fuel=V.fuel_consumed,
+                                             fuel_per100=V.average_fuel_consumption_from_update)
                         V.save()
                         return Show_Fleet.get(self, request)
                 except json.decoder.JSONDecodeError or socket.timeout:
@@ -240,3 +239,54 @@ class Ranking(View):
         user = request.user
         user.save()
         return Ranking.get(self, request)
+
+
+class Input_vehicle(View):
+
+    def get(self, request):
+        if not request.user.is_authenticated:
+            return render(request, 'not_singed_in.html', static_values.Not_signed_in)
+        return render(request, 'input_vehicle.html', {'form': APIFormVIN})
+
+
+    def post(self,request):
+        if not request.user.is_authenticated:
+            return render(request, 'not_singed_in.html', static_values.Not_signed_in)
+        if 'logout' in request.POST:
+            logout(request)
+            return redirect('/login/')
+        # save data into variables
+        form = APIFormVIN(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            username = data.get('username')
+            password = data.get('password')
+            vin_num = data.get('vin')
+            dist, fuel, from_date, vin = veh_data(username, password, vin_num)
+            user = request.user
+            try:
+                V = Vehicle.objects.get(vin=vin)
+                try:
+                    F = Fleet.objects.get(user_id_id=user.id)
+                    VehiclesInFleet.objects.get(Vehicle_id=V.id, Fleet_id=F.id)
+                    # This is the refresh place
+                    return render(request, 'input_vehicle.html', {'form': form, 'mess': 'Vehicle already exist'})
+                except VehiclesInFleet.DoesNotExist:
+                    VehiclesInFleet.objects.create(Vehicle_id=V.id, Fleet_id=F.id)
+                    F.amount += 1
+                    F.save()
+            except Vehicle.DoesNotExist:
+                fuel_consumption = round(fuel / dist * 100, 2)
+                Vehicle.objects.create(avgFuelConsumptionPer100Km=fuel_consumption,
+                                       vin=vin,
+                                       last_data_upload=datetime.now(),
+                                       first_data_upload=from_date,
+                                       distance_traveled=dist,
+                                       fuel_consumed=fuel)
+                V = Vehicle.objects.get(vin=vin)
+                F = Fleet.objects.get(user_id_id=user.id)
+                API.objects.create(username=username, password=password, vehicle_id=V.id)
+                VehiclesInFleet.objects.create(Vehicle_id=V.id, Fleet_id=F.id)
+                F.amount += 1
+                F.save()
+        return redirect('/home/')

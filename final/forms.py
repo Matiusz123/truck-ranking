@@ -54,3 +54,27 @@ class APIForm(forms.Form):
         if len(password) != 10:
             raise ValidationError("Password should be 10 characters")
         return password
+
+
+class APIFormVIN(forms.Form):
+    username = forms.CharField()
+    password = forms.CharField()
+    vin = forms.CharField()
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if len(username) != 10:
+            raise ValidationError("Username should be 10 characters")
+        return username
+
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        if len(password) != 10:
+            raise ValidationError("Password should be 10 characters")
+        return password
+
+    def clean_vin(self):
+        vin = self.cleaned_data.get('vin')
+        if len(vin) != 17:
+            raise ValidationError("VIN should be 17 characters")
+        return vin

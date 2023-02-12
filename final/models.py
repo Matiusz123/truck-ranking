@@ -35,5 +35,8 @@ class API(models.Model):
 
 
 class Event(models.Model):
-    name = models.CharField(max_length=50)
-    when = models.DateTimeField()
+    Vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
+    milage = models.IntegerField()
+    fuel = models.IntegerField()
+    fuel_per100 = models.FloatField()
+    when = models.DateTimeField(auto_now=True)

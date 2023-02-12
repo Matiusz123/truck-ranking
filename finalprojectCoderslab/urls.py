@@ -27,7 +27,7 @@ urlpatterns = [
     path('sign_up/', views.Sign_up.as_view()),
     path('home/', views.home),
     path('input_your_vehicle/', views.Input_vehicle.as_view()),
-    path('input_your_fleet/', views.Input_vehicle.as_view()),
+    path('input_your_fleet/', views.Input_fleet.as_view()),
     path('show_my_fleet/', views.Show_Fleet.as_view()),
     path('ranking/', views.Ranking.as_view()),
 
